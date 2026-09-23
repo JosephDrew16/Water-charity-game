@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Quest</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">💧</div>
+          <div>
+            <p class="eyebrow">charity: water</p>
+            <h1>Water Quest</h1>
+          </div>
+        </div>
+
+        <div class="hud">
+          <div class="stat-box">
+            <span class="label">Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-box timer">
+            <span class="label">Time</span>
+            <strong id="time">30</strong>
+          </div>
+          <div class="stat-box">
+            <span class="label">Best</span>
+            <strong id="highScore">0</strong>
+          </div>
+          <a class="header-wireframe-link" href="wireframe.svg" target="_blank" rel="noreferrer">Wireframe</a>
+          <button id="pauseButton" class="pause-btn" type="button">Pause</button>
+        </div>
+      </header>
+
+      <main class="game-panel">
+        <div id="message" class="status-message">Tap the yellow jerry cans to bring clean water to life.</div>
+
+        <div id="gameArea" class="game-area" aria-live="polite">
+          <div id="startOverlay" class="overlay visible">
+            <div class="panel card">
+              <p class="eyebrow accent">Mission</p>
+              <h2>Save clean water</h2>
+              <p>
+                Tap as many yellow jerry cans as you can before the timer ends. Every
+                clean-water win brings fresh hope to communities.
+              </p>
+              <button id="startButton" class="primary-btn">Start mission</button>
+            </div>
+          </div>
+
+          <div id="pauseOverlay" class="overlay hidden">
+            <div class="panel card end-card">
+              <p class="eyebrow accent">Mission paused</p>
+              <h2>Take a breath</h2>
+              <p>The water mission is waiting for your next move.</p>
+              <button id="resumeButton" class="primary-btn">Resume</button>
+            </div>
+          </div>
+
+          <div id="endOverlay" class="overlay hidden">
+            <div class="panel card end-card">
+              <p class="eyebrow accent">Round complete</p>
+              <h2 id="finalTitle">Nice work!</h2>
+              <p id="finalMessage">You collected a strong water supply.</p>
+
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span>Final score</span>
+                  <strong id="finalScore">0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Best score</span>
+                  <strong id="bestScore">0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Best streak</span>
+                  <strong id="finalBestStreak">0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Accuracy</span>
+                  <strong id="finalAccuracy">0%</strong>
+                </div>
+              </div>
+
+              <button id="restartButton" class="primary-btn">Play again</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bar">
+          <div class="milestone-box">
+            <span class="label">Milestone</span>
+            <strong id="milestone">10 pts</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="label">Best streak</span>
+            <strong id="bestStreak">0</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="label">Combo</span>
+            <strong id="combo">x1</strong>
+          </div>
+          <div class="mini-stat level-box">
+            <span class="label">Level</span>
+            <strong id="difficultyLevel">1</strong>
+          </div>
+        </div>
+
+        <div class="leaderboard-panel">
+          <div class="leaderboard-header">
+            <h3>Top missions</h3>
+          </div>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+        </div>
+
+        <div class="wireframe-link-wrap">
+          <a href="wireframe.svg" target="_blank" rel="noreferrer">Open wireframe</a>
+        </div>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
