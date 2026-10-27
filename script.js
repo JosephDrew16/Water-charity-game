@@ -19,17 +19,45 @@ const startButton = document.getElementById('startButton');
 const restartButton = document.getElementById('restartButton');
 const resumeButton = document.getElementById('resumeButton');
 const pauseButton = document.getElementById('pauseButton');
+const resetButton = document.getElementById('resetButton');
+const difficultySelect = document.getElementById('difficultySelect');
 const difficultyLevelEl = document.getElementById('difficultyLevel');
 const leaderboardListEl = document.getElementById('leaderboardList');
 
-const GAME_DURATION = 30;
 const BASE_POINTS = 10;
 const MAX_ITEMS = 8;
 const HIGH_SCORE_KEY = 'water-quest-high-score';
 const LEADERBOARD_KEY = 'water-quest-leaderboard';
+const DIFFICULTY_SETTINGS = {
+  easy: {
+    duration: 45,
+    spawnDelay: 1100,
+    minSpawnDelay: 850,
+    hazardDelay: 4000,
+    minHazardDelay: 3000,
+    maxHazards: 1
+  },
+  normal: {
+    duration: 30,
+    spawnDelay: 820,
+    minSpawnDelay: 350,
+    hazardDelay: 2600,
+    minHazardDelay: 1400,
+    maxHazards: 2
+  },
+  hard: {
+    duration: 20,
+    spawnDelay: 580,
+    minSpawnDelay: 300,
+    hazardDelay: 1600,
+    minHazardDelay: 800,
+    maxHazards: 3
+  }
+};
 
 let score = 0;
-let timeLeft = GAME_DURATION;
+let gameDuration = DIFFICULTY_SETTINGS.normal.duration;
+let timeLeft = gameDuration;
 let combo = 1;
 let bestStreak = 0;
 let highScore = getStoredHighScore();
@@ -203,6 +231,7 @@ function createFloatingText(x, y, text, kind = 'good') {
 function clearEntities() {
   activeEntities.forEach((entity) => entity.remove());
   activeEntities = [];
+  gameArea.querySelectorAll('.float-text').forEach((text) => text.remove());
 }
 
 function getRandomPosition() {
@@ -266,7 +295,8 @@ function spawnCan() {
 }
 
 function spawnHazard() {
-  if (!gameActive || document.querySelectorAll('.hazard').length >= 2) {
+  const settings = DIFFICULTY_SETTINGS[difficultySelect.value];
+  if (!gameActive || document.querySelectorAll('.hazard').length >= settings.maxHazards) {
     return;
   }
 
@@ -298,27 +328,28 @@ function spawnHazard() {
   activeEntities.push(hazard);
 }
 
-function updateDifficulty() {
-  difficultyLevel = Math.min(5, Math.max(1, Math.floor((GAME_DURATION - timeLeft) / 6) + 1));
-  spawnDelay = Math.max(350, 820 - (difficultyLevel - 1) * 90);
-  hazardDelay = Math.max(1400, 2600 - (difficultyLevel - 1) * 220);
+function updateDifficulty(forceRefresh = false) {
+  const settings = DIFFICULTY_SETTINGS[difficultySelect.value];
+  const nextLevel = Math.min(5, Math.max(1, Math.floor((gameDuration - timeLeft) / 6) + 1));
+  const levelChanged = nextLevel !== difficultyLevel;
+  difficultyLevel = nextLevel;
+  spawnDelay = Math.max(settings.minSpawnDelay, settings.spawnDelay - (difficultyLevel - 1) * 90);
+  hazardDelay = Math.max(settings.minHazardDelay, settings.hazardDelay - (difficultyLevel - 1) * 220);
 
-  if (spawnTimer) {
-    clearInterval(spawnTimer);
-  }
-  spawnTimer = setInterval(() => {
-    spawnCan();
-    if (difficultyLevel >= 2 && Math.random() > 0.45) {
+  if (forceRefresh || levelChanged) {
+    if (spawnTimer) clearInterval(spawnTimer);
+    spawnTimer = setInterval(() => {
       spawnCan();
-    }
-  }, spawnDelay);
+      if (difficultyLevel >= 2 && Math.random() > 0.45) {
+        spawnCan();
+      }
+    }, spawnDelay);
 
-  if (hazardTimer) {
-    clearInterval(hazardTimer);
+    if (hazardTimer) clearInterval(hazardTimer);
+    hazardTimer = setInterval(() => {
+      spawnHazard();
+    }, hazardDelay);
   }
-  hazardTimer = setInterval(() => {
-    spawnHazard();
-  }, hazardDelay);
 
   updateScoreboard();
 }
@@ -335,16 +366,17 @@ function updateTimer() {
 
 function startGame() {
   ensureAudioContext();
+  gameDuration = DIFFICULTY_SETTINGS[difficultySelect.value].duration;
   score = 0;
-  timeLeft = GAME_DURATION;
+  timeLeft = gameDuration;
   combo = 1;
   bestStreak = 0;
   totalHits = 0;
   cleanCatches = 0;
   hazardClicks = 0;
   difficultyLevel = 1;
-  spawnDelay = 700;
-  hazardDelay = 2500;
+  spawnDelay = DIFFICULTY_SETTINGS[difficultySelect.value].spawnDelay;
+  hazardDelay = DIFFICULTY_SETTINGS[difficultySelect.value].hazardDelay;
   isPaused = false;
   gameActive = true;
   clearEntities();
@@ -361,7 +393,36 @@ function startGame() {
   if (hazardTimer) clearInterval(hazardTimer);
 
   timer = setInterval(updateTimer, 1000);
-  updateDifficulty();
+  updateDifficulty(true);
+}
+
+function resetGame() {
+  clearInterval(timer);
+  clearInterval(spawnTimer);
+  clearInterval(hazardTimer);
+  clearEntities();
+
+  score = 0;
+  gameDuration = DIFFICULTY_SETTINGS[difficultySelect.value].duration;
+  timeLeft = gameDuration;
+  combo = 1;
+  bestStreak = 0;
+  totalHits = 0;
+  cleanCatches = 0;
+  hazardClicks = 0;
+  difficultyLevel = 1;
+  spawnDelay = DIFFICULTY_SETTINGS[difficultySelect.value].spawnDelay;
+  hazardDelay = DIFFICULTY_SETTINGS[difficultySelect.value].hazardDelay;
+  gameActive = false;
+  isPaused = false;
+  highScore = getStoredHighScore();
+
+  updateScoreboard();
+  setMessage('Tap the yellow jerry cans to bring clean water to life.', true);
+  startOverlay.classList.remove('hidden');
+  pauseOverlay.classList.add('hidden');
+  endOverlay.classList.add('hidden');
+  pauseButton.textContent = 'Pause';
 }
 
 function getAccuracy() {
@@ -378,7 +439,7 @@ function resumeGame() {
   pauseButton.textContent = 'Pause';
   pauseOverlay.classList.add('hidden');
   timer = setInterval(updateTimer, 1000);
-  updateDifficulty();
+  updateDifficulty(true);
 }
 
 function togglePause() {
@@ -440,6 +501,13 @@ startButton.addEventListener('click', startGame);
 restartButton.addEventListener('click', startGame);
 resumeButton.addEventListener('click', resumeGame);
 pauseButton.addEventListener('click', togglePause);
+resetButton.addEventListener('click', resetGame);
+difficultySelect.addEventListener('change', () => {
+  if (gameActive) return;
+  gameDuration = DIFFICULTY_SETTINGS[difficultySelect.value].duration;
+  timeLeft = gameDuration;
+  updateScoreboard();
+});
 
 renderLeaderboard();
 updateScoreboard();

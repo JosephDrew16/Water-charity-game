@@ -21,11 +21,15 @@ Players race against a timer to tap charity: water style yellow jerry cans as th
 
 ### MVP features
 - start screen and restart flow
+- Easy, Normal, and Hard modes with different round lengths and spawn rates
 - randomly spawning cans with click interaction
+- cans and hazards are removed when clicked
 - score and timer UI
 - success/failure feedback text
 - milestone thresholds for rewards or levels
 - simple sound or animation polish
+- footer links to charity: water and donation pages
+- Proxima Nova-style sans-serif typography
 
 ### Stretch goals
 - difficulty scaling over time

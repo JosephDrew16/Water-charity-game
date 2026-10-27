@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Water Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -30,8 +36,8 @@
             <span class="label">Best</span>
             <strong id="highScore">0</strong>
           </div>
-          <a class="header-wireframe-link" href="wireframe.svg" target="_blank" rel="noreferrer">Wireframe</a>
           <button id="pauseButton" class="pause-btn" type="button">Pause</button>
+          <button id="resetButton" class="reset-btn" type="button">Reset</button>
         </div>
       </header>
 
@@ -47,6 +53,14 @@
                 Tap as many yellow jerry cans as you can before the timer ends. Every
                 clean-water win brings fresh hope to communities.
               </p>
+              <div class="difficulty-control">
+                <label for="difficultySelect">Difficulty</label>
+                <select id="difficultySelect">
+                  <option value="easy">Easy — 45 seconds</option>
+                  <option value="normal" selected>Normal — 30 seconds</option>
+                  <option value="hard">Hard — 20 seconds</option>
+                </select>
+              </div>
               <button id="startButton" class="primary-btn">Start mission</button>
             </div>
           </div>
@@ -115,11 +129,16 @@
           </div>
           <ol id="leaderboardList" class="leaderboard-list"></ol>
         </div>
-
-        <div class="wireframe-link-wrap">
-          <a href="wireframe.svg" target="_blank" rel="noreferrer">Open wireframe</a>
-        </div>
       </main>
+
+      <footer class="site-footer">
+        <span>Help bring clean water to everyone.</span>
+        <nav aria-label="charity: water links">
+          <a href="https://www.charitywater.org/" target="_blank" rel="noreferrer">Visit charity: water</a>
+          <a href="https://www.charitywater.org/donate" target="_blank" rel="noreferrer">Donate</a>
+          <a href="https://www.charitywater.org/donate/the-spring" target="_blank" rel="noreferrer">Give monthly</a>
+        </nav>
+      </footer>
     </div>
 
     <script src="script.js"></script>
